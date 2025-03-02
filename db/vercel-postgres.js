@@ -1,11 +1,10 @@
-const { Client } = require('@vercel/postgres'); // Use Client instead of Pool if Pool is deprecated or not available
-
-const client = new Client({
+const { Pool } = require('pg');
+const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
 });
 
-client.connect()
+pool.connect()
   .then(() => console.log('Connected to Neon Postgres'))
   .catch(err => console.error('Database connection error:', err));
 
-module.exports = client;
+module.exports = pool;
