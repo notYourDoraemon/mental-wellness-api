@@ -1,0 +1,490 @@
+openapi: 3.0.0
+info:
+  title: Mental Wellness API
+  version: 1.0.0
+  description: A secure, terminal-friendly API for tracking daily moods and journal entries. Supports mood logging, journaling with sentiment analysis, and public read access with private write operations. See the full documentation in the README.md or this file.
+servers:
+  - url: http://localhost:6066
+    description: Local development server
+paths:
+  /api/register:
+    post:
+      summary: Register a new user
+      description: Creates a new user with a unique username and generates an API key for authenticated write operations.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: A unique username for the user
+                  example: "aditya"
+              required:
+                - username
+      responses:
+        '201':
+          description: User successfully registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    example: "aditya"
+                  api_key:
+                    type: string
+                    example: "550e8400-e29b-41d4-a716-446655440000"
+        '400':
+          description: Invalid request (e.g., username already taken)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Username already taken"
+  /api/moods:
+    post:
+      summary: Add a mood entry
+      description: Logs a new mood entry for the authenticated user. Only the mood field is required; feeling and notes are optional.
+      security:
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mood:
+                  type: string
+                  description: The user's mood (required)
+                  example: "happy"
+                feeling:
+                  type: string
+                  description: Additional feeling (optional)
+                  example: "excited"
+                notes:
+                  type: string
+                  description: Additional notes (optional)
+                  example: "Great day!"
+              required:
+                - mood
+      responses:
+        '201':
+          description: Mood entry created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  mood:
+                    type: string
+                    example: "happy"
+                  feeling:
+                    type: string
+                    example: "excited"
+                  notes:
+                    type: string
+                    example: "Great day!"
+        '401':
+          description: Missing or invalid API key
+  /api/moods/{username}:
+    get:
+      summary: Get all mood entries for a user
+      description: Retrieves paginated mood entries for a specified user. Publicly accessible.
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+          description: The username to fetch moods for
+          example: "aditya"
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+          example: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+            maximum: 100
+          description: Number of entries per page
+          example: 10
+      responses:
+        '200':
+          description: List of mood entries with pagination info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  entries:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        mood:
+                          type: string
+                          example: "happy"
+                        feeling:
+                          type: string
+                          example: "excited"
+                        notes:
+                          type: string
+                          example: "Great day!"
+                        created_at:
+                          type: string
+                          example: "2025-03-02T10:00:00Z"
+                  pagination:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                        example: 1
+                      limit:
+                        type: integer
+                        example: 10
+                      total:
+                        type: integer
+                        example: 25
+                      pages:
+                        type: integer
+                        example: 3
+        '404':
+          description: User not found
+  /api/moods/date/{username}/{date}:
+    get:
+      summary: Get mood entries for a specific date
+      description: Retrieves all mood entries for a user on a specific date. Publicly accessible.
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+          description: The username to fetch moods for
+          example: "aditya"
+        - in: path
+          name: date
+          required: true
+          schema:
+            type: string
+            format: date
+          description: Date in YYYY-MM-DD format
+          example: "2025-03-02"
+      responses:
+        '200':
+          description: List of mood entries for the specified date
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    mood:
+                      type: string
+                      example: "happy"
+                    feeling:
+                      type: string
+                      example: "excited"
+                    notes:
+                      type: string
+                      example: "Great day!"
+                    created_at:
+                      type: string
+                      example: "2025-03-02T10:00:00Z"
+        '404':
+          description: User not found
+  /api/stats/{username}:
+    get:
+      summary: Get mood statistics for a user
+      description: Returns top moods and feelings for a user over all time. Publicly accessible.
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+          description: The username to fetch stats for
+          example: "aditya"
+      responses:
+        '200':
+          description: Mood and feeling statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  topMoods:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        mood:
+                          type: string
+                          example: "happy"
+                        count:
+                          type: integer
+                          example: 5
+                  topFeelings:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        feeling:
+                          type: string
+                          example: "excited"
+                        count:
+                          type: integer
+                          example: 3
+        '404':
+          description: User not found
+  /api/moods/{id}:
+    delete:
+      summary: Delete a mood entry
+      description: Deletes a specific mood entry. Requires authentication and ownership.
+      security:
+        - apiKey: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the mood entry to delete
+          example: 1
+      responses:
+        '200':
+          description: Mood entry deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Mood entry deleted"
+        '401':
+          description: Missing or invalid API key
+        '404':
+          description: Entry not found or not authorized
+  /api/journal:
+    post:
+      summary: Add a journal entry
+      description: Logs a new journal entry with sentiment analysis. Title and content are required; tags are optional.
+      security:
+        - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: Entry title (required)
+                  example: "Day Reflection"
+                content:
+                  type: string
+                  description: Entry content (required)
+                  example: "I had a great day"
+                tags:
+                  type: string
+                  description: Comma-separated tags (optional)
+                  example: "friends, positivity"
+              required:
+                - title
+                - content
+      responses:
+        '201':
+          description: Journal entry created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  title:
+                    type: string
+                    example: "Day Reflection"
+                  content:
+                    type: string
+                    example: "I had a great day"
+                  tags:
+                    type: string
+                    example: "friends, positivity"
+                  sentiment_score:
+                    type: number
+                    example: 0.2
+        '401':
+          description: Missing or invalid API key
+  /api/journal/{username}:
+    get:
+      summary: Get all journal entries for a user
+      description: Retrieves paginated journal entries for a specified user. Publicly accessible.
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+          description: The username to fetch journal entries for
+          example: "aditya"
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+          example: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+            maximum: 100
+          description: Number of entries per page
+          example: 10
+      responses:
+        '200':
+          description: List of journal entries with pagination info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  entries:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        title:
+                          type: string
+                          example: "Day Reflection"
+                        content:
+                          type: string
+                          example: "I had a great day"
+                        tags:
+                          type: string
+                          example: "friends, positivity"
+                        sentiment_score:
+                          type: number
+                          example: 0.2
+                        created_at:
+                          type: string
+                          example: "2025-03-02T10:00:00Z"
+                  pagination:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                        example: 1
+                      limit:
+                        type: integer
+                        example: 10
+                      total:
+                        type: integer
+                        example: 15
+                      pages:
+                        type: integer
+                        example: 2
+        '404':
+          description: User not found
+  /api/journal/stats/{username}:
+    get:
+      summary: Get journal statistics for a user
+      description: Returns average sentiment and top tags for a user's journal entries. Publicly accessible.
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+          description: The username to fetch stats for
+          example: "aditya"
+      responses:
+        '200':
+          description: Journal statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  average_sentiment:
+                    type: number
+                    example: 0.15
+                  top_tags:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        tags:
+                          type: string
+                          example: "friends, positivity"
+                        count:
+                          type: integer
+                          example: 3
+        '404':
+          description: User not found
+  /api/journal/{id}:
+    delete:
+      summary: Delete a journal entry
+      description: Deletes a specific journal entry. Requires authentication and ownership.
+      security:
+        - apiKey: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the journal entry to delete
+          example: 1
+      responses:
+        '200':
+          description: Journal entry deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Journal entry deleted"
+        '401':
+          description: Missing or invalid API key
+        '404':
+          description: Entry not found or not authorized
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key

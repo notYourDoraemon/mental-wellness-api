@@ -1,0 +1,4 @@
+todo:
+improve docs
+add more fields to journal entry
+improve grading
