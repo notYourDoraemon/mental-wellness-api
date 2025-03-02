@@ -7,10 +7,17 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+
+// Trust Vercel’s proxy
+app.set('trust proxy', true);
 
 app.use(express.json());
 app.use(limiter);
+
+// Handle root path
+app.get('/', (req, res) => {
+  res.redirect('/api/docs');
+});
 
 // Example: Test DB connection
 app.get('/health', async (req, res) => {
@@ -166,6 +173,4 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+module.exports = app; // Export for Vercel
