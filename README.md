@@ -34,13 +34,13 @@ A simple, secure, and terminal-friendly API for tracking moods and journaling. B
    ```bash
    npm start
    ```
-   The API will be available at `http://localhost:6066`.
+   The API will be available at `http://localhost:3000`.
 
 ## Usage
 
 ### Register a User
 ```bash
-curl -X POST -H "Content-Type: application/json" -d '{"username":"aditya"}' http://localhost:6066/api/register
+curl -X POST -H "Content-Type: application/json" -d '{"username":"aditya"}' http://localhost:3000/api/register
 ```
 Response:
 ```json
@@ -53,28 +53,28 @@ Save the `api_key` for authenticated requests.
 
 ### Post a Mood
 ```bash
-curl -X POST -H "X-API-Key: <your-api-key>" -H "Content-Type: application/json" -d '{"mood":"happy","feeling":"excited","notes":"Great day!"}' http://localhost:6066/api/moods
+curl -X POST -H "X-API-Key: <your-api-key>" -H "Content-Type: application/json" -d '{"mood":"happy","feeling":"excited","notes":"Great day!"}' http://localhost:3000/api/moods
 ```
 
 ### Get Moods with Pagination
 ```bash
-curl "http://localhost:6066/api/moods/aditya?page=1&limit=5"
+curl "http://localhost:3000/api/moods/aditya?page=1&limit=5"
 ```
 
 ### Post a Journal Entry
 ```bash
-curl -X POST -H "X-API-Key: <your-api-key>" -H "Content-Type: application/json" -d '{"title":"Day Reflection","content":"I had a great day","tags":"friends, positivity"}' http://localhost:6066/api/journal
+curl -X POST -H "X-API-Key: <your-api-key>" -H "Content-Type: application/json" -d '{"title":"Day Reflection","content":"I had a great day","tags":"friends, positivity"}' http://localhost:3000/api/journal
 ```
 
 ### Get Journal Stats
 ```bash
-curl http://localhost:6066/api/journal/stats/aditya
+curl http://localhost:3000/api/journal/stats/aditya
 ```
 
 ### Fetch API Documentation
 - **Via `curl`**:
   ```bash
-  curl http://localhost:6066/api/docs
+  curl http://localhost:3000/api/docs
   ```
   Response: JSON version of the OpenAPI spec (see `docs/openapi.yaml` for structure). Example snippet:
   ```json
@@ -95,11 +95,11 @@ curl http://localhost:6066/api/journal/stats/aditya
     }
   }
   ```
-- **Via Web Browser**: Visit `http://localhost:6066/api/docs` to see a formatted HTML page with the API spec.
+- **Via Web Browser**: Visit `http://localhost:3000/api/docs` to see a formatted HTML page with the API spec.
 
 ## API Reference
 
-The API documentation is available via `curl http://localhost:6066/api/docs` (JSON) or in a browser at `http://localhost:6066/api/docs` (HTML). The raw spec is also in `docs/openapi.yaml`. Below is a summary table and detailed reference with examples.
+The API documentation is available via `curl http://localhost:3000/api/docs` (JSON) or in a browser at `http://localhost:3000/api/docs` (HTML). The raw spec is also in `docs/openapi.yaml`. Below is a summary table and detailed reference with examples.
 
 ### Available Endpoints
 | Method | Endpoint                     | Description                          | Auth Required |
@@ -167,7 +167,7 @@ The API documentation is available via `curl http://localhost:6066/api/docs` (JS
   - `limit`: Entries per page (default: 10, max: 100).
 - **Example**:
   ```bash
-  curl "http://localhost:6066/api/moods/aditya?page=1&limit=5"
+  curl "http://localhost:3000/api/moods/aditya?page=1&limit=5"
   ```
 - **Response** (200):
   ```json
@@ -197,7 +197,7 @@ The API documentation is available via `curl http://localhost:6066/api/docs` (JS
   - `date`: Date in YYYY-MM-DD format (e.g., "2025-03-02").
 - **Example**:
   ```bash
-  curl http://localhost:6066/api/moods/date/aditya/2025-03-02
+  curl http://localhost:3000/api/moods/date/aditya/2025-03-02
   ```
 - **Response** (200):
   ```json
@@ -218,7 +218,7 @@ The API documentation is available via `curl http://localhost:6066/api/docs` (JS
   - `username`: The user's username (e.g., "aditya").
 - **Example**:
   ```bash
-  curl http://localhost:6066/api/stats/aditya
+  curl http://localhost:3000/api/stats/aditya
   ```
 - **Response** (200):
   ```json
@@ -240,7 +240,7 @@ The API documentation is available via `curl http://localhost:6066/api/docs` (JS
   - `id`: The mood entry ID (e.g., 1).
 - **Example**:
   ```bash
-  curl -X DELETE -H "X-API-Key: <your-api-key>" http://localhost:6066/api/moods/1
+  curl -X DELETE -H "X-API-Key: <your-api-key>" http://localhost:3000/api/moods/1
   ```
 - **Response** (200):
   ```json
@@ -279,7 +279,7 @@ The API documentation is available via `curl http://localhost:6066/api/docs` (JS
   - `limit`: Entries per page (default: 10, max: 100).
 - **Example**:
   ```bash
-  curl "http://localhost:6066/api/journal/aditya?page=1&limit=5"
+  curl "http://localhost:3000/api/journal/aditya?page=1&limit=5"
   ```
 - **Response** (200):
   ```json
@@ -309,7 +309,7 @@ The API documentation is available via `curl http://localhost:6066/api/docs` (JS
   - `username`: The user's username (e.g., "aditya").
 - **Example**:
   ```bash
-  curl http://localhost:6066/api/journal/stats/aditya
+  curl http://localhost:3000/api/journal/stats/aditya
   ```
 - **Response** (200):
   ```json
@@ -328,7 +328,7 @@ The API documentation is available via `curl http://localhost:6066/api/docs` (JS
   - `id`: The journal entry ID (e.g., 1).
 - **Example**:
   ```bash
-  curl -X DELETE -H "X-API-Key: <your-api-key>" http://localhost:6066/api/journal/1
+  curl -X DELETE -H "X-API-Key: <your-api-key>" http://localhost:3000/api/journal/1
   ```
 - **Response** (200):
   ```json

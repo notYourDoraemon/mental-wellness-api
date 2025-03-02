@@ -4,7 +4,7 @@ info:
   version: 1.0.0
   description: A secure, terminal-friendly API for tracking daily moods and journal entries. Supports mood logging, journaling with sentiment analysis, and public read access with private write operations. See the full documentation in the README.md or this file.
 servers:
-  - url: http://localhost:6066
+  - url: http://localhost:3000
     description: Local development server
 paths:
   /api/register:

@@ -7,7 +7,7 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 
 const app = express();
-const PORT = process.env.PORT || 6066;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(limiter);
