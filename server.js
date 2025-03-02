@@ -1,7 +1,7 @@
 const express = require('express');
 const moodRoutes = require('./routes/moodRoutes');
 const journalRoutes = require('./routes/journalRoutes');
-const db = require('./db/database');
+const db = require('./db/vercel-postgres');
 const limiter = require('./middleware/rateLimit');
 const fs = require('fs');
 const yaml = require('js-yaml');
@@ -12,14 +12,23 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(limiter);
 
-app.post('/api/register', (req, res) => {
+// Example: Test DB connection
+app.get('/health', async (req, res) => {
+  try {
+    await db.query('SELECT NOW()');
+    res.json({ status: 'healthy' });
+  } catch (err) {
+    res.status(500).json({ error: 'Database issue' });
+  }
+});
+
+app.post('/api/register', async (req, res) => {
   const { username } = req.body;
   if (!username) return res.status(400).json({ error: 'Username required' });
 
   const apiKey = require('uuid').v4();
   try {
-    const stmt = db.prepare('INSERT INTO users (username, api_key) VALUES (?, ?)');
-    const result = stmt.run(username, apiKey);
+    await db.query('INSERT INTO users (username, api_key) VALUES ($1, $2)', [username, apiKey]);
     res.status(201).json({ username, api_key: apiKey });
   } catch (error) {
     res.status(400).json({ error: 'Username already taken' });

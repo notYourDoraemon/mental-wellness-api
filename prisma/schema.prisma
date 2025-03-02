@@ -1,0 +1,31 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
+}
+
+model users {
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  api_key  String @unique
+}
+
+model mood_entries {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  mood       String
+  feeling    String?
+  notes      String?
+  created_at DateTime @default(now())
+  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model journal_entries {
+  id             Int      @id @default(autoincrement())
+  user_id        Int
+  title          String
+  content        String
+  tags           String?
+  sentiment_score Float?
+  created_at     DateTime @default(now())
+  users          users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}

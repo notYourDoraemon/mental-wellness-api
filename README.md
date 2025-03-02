@@ -1,6 +1,6 @@
 # Mental Wellness API
 
-A simple, secure, and terminal-friendly API for tracking moods and journaling. Built with Node.js, Express, and Better-SQLite3, this API allows users to log their daily moods and journal entries, retrieve statistics, and manage their data with ease.
+A simple, secure, and terminal-friendly API for tracking moods and journaling. Built with Node.js, Express, and Vercel Postgres, this API allows users to log their daily moods and journal entries, retrieve statistics, and manage their data with ease.
 
 ## Features
 - **User Registration**: Create a unique username and API key for authentication.
@@ -17,7 +17,7 @@ A simple, secure, and terminal-friendly API for tracking moods and journaling. B
 
 ### Prerequisites
 - [Node.js](https://nodejs.org/)
-- [npm](https://www.npmjs.com/)
+- [npm](https://www.npmjs.com/) 
 
 ### Installation
 1. Clone the repository:
@@ -25,23 +25,28 @@ A simple, secure, and terminal-friendly API for tracking moods and journaling. B
    git clone https://github.com/notyourdoraemon/mental-wellness-api.git
    cd mental-wellness-api
    ```
-2. Install dependencies and configure .env:
+2. Install dependencies:
    ```bash
    npm install
-   mv .env.example .env
    ```
-3. Start the server:
+3. Start the server locally (on `main` branch for SQLite, port 3000, or `vercel-deployment` branch for Vercel Postgres, port 3000):
    ```bash
    npm start
    ```
-   The API will be available at `http://localhost:3000`.
+   - For local SQLite development (on `main`): Use port 3000 (update `server.js` in `main` if needed).
+   - For Vercel testing (on `vercel-deployment`): Use port 3000.
 
 ## Usage
 
 ### Register a User
-```bash
-curl -X POST -H "Content-Type: application/json" -d '{"username":"aditya"}' http://localhost:3000/api/register
-```
+- **Local (SQLite, `main` branch, port 3000)**:
+  ```bash
+  curl -X POST -H "Content-Type: application/json" -d '{"username":"aditya"}' http://localhost:3000/api/register
+  ```
+- **Vercel (Postgres, `vercel-deployment` branch, port 3000)**:
+  ```bash
+  curl -X POST -H "Content-Type: application/json" -d '{"username":"aditya"}' https://mental-wellness-api.vercel.app/api/register
+  ```
 Response:
 ```json
 {
@@ -52,54 +57,63 @@ Response:
 Save the `api_key` for authenticated requests.
 
 ### Post a Mood
-```bash
-curl -X POST -H "X-API-Key: <your-api-key>" -H "Content-Type: application/json" -d '{"mood":"happy","feeling":"excited","notes":"Great day!"}' http://localhost:3000/api/moods
-```
+- **Local**:
+  ```bash
+  curl -X POST -H "X-API-Key: <your-api-key>" -H "Content-Type: application/json" -d '{"mood":"happy","feeling":"excited","notes":"Great day!"}' http://localhost:3000/api/moods
+  ```
+- **Vercel**:
+  ```bash
+  curl -X POST -H "X-API-Key: <your-api-key>" -H "Content-Type: application/json" -d '{"mood":"happy","feeling":"excited","notes":"Great day!"}' https://mental-wellness-api.vercel.app/api/moods
+  ```
 
 ### Get Moods with Pagination
-```bash
-curl "http://localhost:3000/api/moods/aditya?page=1&limit=5"
-```
+- **Local**:
+  ```bash
+  curl "http://localhost:3000/api/moods/aditya?page=1&limit=5"
+  ```
+- **Vercel**:
+  ```bash
+  curl "https://mental-wellness-api.vercel.app/api/moods/aditya?page=1&limit=5"
+  ```
 
 ### Post a Journal Entry
-```bash
-curl -X POST -H "X-API-Key: <your-api-key>" -H "Content-Type: application/json" -d '{"title":"Day Reflection","content":"I had a great day","tags":"friends, positivity"}' http://localhost:3000/api/journal
-```
+- **Local**:
+  ```bash
+  curl -X POST -H "X-API-Key: <your-api-key>" -H "Content-Type: application/json" -d '{"title":"Day Reflection","content":"I had a great day","tags":"friends, positivity"}' http://localhost:3000/api/journal
+  ```
+- **Vercel**:
+  ```bash
+  curl -X POST -H "X-API-Key: <your-api-key>" -H "Content-Type: application/json" -d '{"title":"Day Reflection","content":"I had a great day","tags":"friends, positivity"}' https://mental-wellness-api.vercel.app/api/journal
+  ```
 
 ### Get Journal Stats
-```bash
-curl http://localhost:3000/api/journal/stats/aditya
-```
+- **Local**:
+  ```bash
+  curl http://localhost:3000/api/journal/stats/aditya
+  ```
+- **Vercel**:
+  ```bash
+  curl https://mental-wellness-api.vercel.app/api/journal/stats/aditya
+  ```
 
 ### Fetch API Documentation
 - **Via `curl`**:
-  ```bash
-  curl http://localhost:3000/api/docs
-  ```
-  Response: JSON version of the OpenAPI spec (see `docs/openapi.yaml` for structure). Example snippet:
-  ```json
-  {
-    "openapi": "3.0.0",
-    "info": {
-      "title": "Mental Wellness API",
-      "version": "1.0.0",
-      "description": "A secure, terminal-friendly API for tracking daily moods and journal entries..."
-    },
-    "paths": {
-      "/api/register": {
-        "post": {
-          "summary": "Register a new user",
-          "description": "Creates a new user with a unique username and generates an API key..."
-        }
-      }
-    }
-  }
-  ```
-- **Via Web Browser**: Visit `http://localhost:3000/api/docs` to see a formatted HTML page with the API spec.
+  - Local:
+    ```bash
+    curl http://localhost:3000/api/docs
+    ```
+  - Vercel:
+    ```bash
+    curl https://mental-wellness-api.vercel.app/api/docs
+    ```
+  Response: JSON version of the OpenAPI spec (see `docs/openapi.yaml` for structure).
+- **Via Web Browser**:
+  - Local: Visit `http://localhost:3000/api/docs`.
+  - Vercel: Visit `https://mental-wellness-api.vercel.app/api/docs` to see a formatted HTML page with the API spec.
 
 ## API Reference
 
-The API documentation is available via `curl http://localhost:3000/api/docs` (JSON) or in a browser at `http://localhost:3000/api/docs` (HTML). The raw spec is also in `docs/openapi.yaml`. Below is a summary table and detailed reference with examples.
+The API documentation is available via `curl` (JSON) or in a browser (HTML) at `/api/docs`. The raw spec is also in `docs/openapi.yaml`. Below is a summary table and detailed reference with examples.
 
 ### Available Endpoints
 | Method | Endpoint                     | Description                          | Auth Required |
@@ -120,6 +134,7 @@ The API documentation is available via `curl http://localhost:3000/api/docs` (JS
 - **Header**: `X-API-Key: <your-api-key>`
 - Required for all POST and DELETE requests.
 
+### Detailed Endpoints
 ### Detailed Endpoints
 
 #### **POST /api/register**
@@ -338,21 +353,19 @@ The API documentation is available via `curl http://localhost:3000/api/docs` (JS
   ```
 
 ## Hosting
-To host this API on a platform like Heroku, Render, or Vercel:
-1. **Update `server.js`**:
-   - Ensure `PORT` uses `process.env.PORT` (already done).
-2. **Add a Procfile** (for Heroku):
-   ```
-   web: node server.js
-   ```
+To host this API on Vercel using the `vercel-deployment` branch:
+1. **Link to Vercel**:
+   - Go to [vercel.com](https://vercel.com) and sign in with GitHub.
+   - Click “New Project” > “Import Git Repository,” and select your `mental-wellness-api` repo under `notyourdoraemon`.
+   - Choose the `vercel-deployment` branch.
+2. **Configure Project**:
+   - Vercel will detect Node.js and use `vercel.json`.
+   - Set the `POSTGRES_URL` environment variable in the Vercel dashboard:
+     - Go to your project settings > Environment Variables.
+     - Add `POSTGRES_URL` with the value provided by Vercel Postgres (set up a Vercel Postgres database in your project).
 3. **Deploy**:
-   - Push to GitHub.
-   - Connect to your hosting platform and deploy.
-   - Example for Heroku:
-     ```bash
-     heroku create
-     git push heroku main
-     ```
+   - Click “Deploy.” Vercel will build and deploy your project using port 3000 (managed automatically).
+   - Once deployed, you’ll get a URL (e.g., `mental-wellness-api.vercel.app`).
 
 ## Contributing
 1. Fork the repository.
